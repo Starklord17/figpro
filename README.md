@@ -40,5 +40,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## Docs
 
+- https://ui.shadcn.com/docs/installation/next
+
 - https://liveblocks.io
 - https://liveblocks.io/docs/get-started/nextjs
