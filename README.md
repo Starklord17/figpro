@@ -44,3 +44,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 - https://liveblocks.io
 - https://liveblocks.io/docs/get-started/nextjs
+
+Live Cursors Chat example:
+- https://liveblocks.io/examples/live-cursors-chat/nextjs-live-cursors-chat
