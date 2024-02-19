@@ -9,31 +9,39 @@ import ReactionSelector from "./reaction/ReactionButton";
 import FlyingReaction from "./reaction/FlyingReaction";
 import useInterval from "@/hooks/useInterval";
 
-function Live() {
+export default function Live() {
   const others = useOthers();
   const [{ cursor }, updateMyPresence] = useMyPresence() as any;
+  
+  const broadcast = useBroadcastEvent();
+
+  // store the reactions created on mouse click
+  const [reactions, setReactions] = useState<Reaction[]>([]);
+
 
   // track the state of the cursor (hidden, chat, reaction, reaction selector)
   const [cursorState, setCursorState] = useState<CursorState>({
     mode: CursorMode.Hidden,
   });
 
-  // store the reactions created on mouse click
-  const [reaction, setReaction] = useState<Reaction[]>([]);
 
-  const broadcast = useBroadcastEvent();
+  // set the reaction of the cursor
+  const setReaction = useCallback((reaction: string) => {
+    setCursorState({ mode: CursorMode.Reaction, reaction, isPressed: false });
+  }, []);
+  
 
+
+  // Remove reactions that are not visible anymore (every 1 sec)
   useInterval(() => {
-    setReaction((reaction) => reaction.filter((r) => r.timestamp > Date.now() - 4000))
+    setReactions((reactions) => reactions.filter((reaction) => reaction.timestamp > Date.now() - 4000))
   }, 1000)
 
+  // Broadcast the reaction to other users (every 100ms)
   useInterval(() => {
-    if (
-      cursorState.mode === CursorMode.Reaction &&
-      cursorState.isPressed &&
-      cursor
-    ) {
-      setReaction((reactions) =>
+    if (cursorState.mode === CursorMode.Reaction && cursorState.isPressed && cursor) {
+      // concat all the reactions created on mouse click
+      setReactions((reactions) =>
         reactions.concat([
           {
             point: { x: cursor.x, y: cursor.y },
@@ -43,26 +51,33 @@ function Live() {
         ])
       );
 
-        broadcast({
-          x: cursor.x,
-          y: cursor.y,
-          value: cursorState.reaction,
-        })
-
+      // Broadcast the reaction to other users
+      broadcast({
+        x: cursor.x,
+        y: cursor.y,
+        value: cursorState.reaction,
+      });
     }
   }, 100);
 
+  /**
+   * useEventListener is used to listen to events broadcasted by other
+   * users.
+   *
+   * useEventListener: https://liveblocks.io/docs/api-reference/liveblocks-react#useEventListener
+   */
   useEventListener((eventData) => {
     const event = eventData.event as ReactionEvent;
-
-    setReaction((reactions) => reactions.concat([
-      {
-        point: {x: event.x, y: event.y },
-        value: event.value,
-        timestamp: Date.now(),
-      }
-    ]))
-  })
+    setReactions((reactions) =>
+      reactions.concat([
+        {
+          point: { x: event.x, y: event.y },
+          value: event.value,
+          timestamp: Date.now(),
+        },
+      ])
+    );
+  });
 
   const handlePointerMove = useCallback((event: React.PointerEvent) => {
     event.preventDefault();
@@ -141,52 +156,54 @@ function Live() {
     };
   }, [updateMyPresence]);
 
-  // Verify this
-  const setReactions = useCallback((reaction: string) => {
-    setCursorState({ mode: CursorMode.Reaction, reaction, isPressed: false });
-  }, []);
+
 
   return (
-    <div
-      onPointerMove={handlePointerMove}
-      onPointerLeave={handlePointerLeave}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      className="h-[100vh] w-full flex justify-center items-center text-center"
-    >
-      <h1 className="text-4xl font-bold mt-8 mb-8 text-white md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-display tracking-tight dark:text-white md:tracking-tighter leading-tight">
-        Liveblocks Figma Clone
-      </h1>
+    
+      <div
+        onPointerMove={handlePointerMove}
+        onPointerLeave={handlePointerLeave}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        className="h-[100vh] w-full flex justify-center items-center text-center"
+      >
+        <h1 className="text-4xl font-bold mt-8 mb-8 text-white md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-display tracking-tight dark:text-white md:tracking-tighter leading-tight">
+          Liveblocks Figma Clone
+        </h1>
 
-      {/* Render the reactions */}
-      {reaction.map((r) => {
-        <FlyingReaction
-          key={r.timestamp.toString()}
-          x={r.point.x}
-          y={r.point.y}
-          timestamp={r.timestamp}
-          value={r.value}
-        />;
-      })}
+        {/* Render the reactions */}
+        {reactions.map((reaction) => (
+          <FlyingReaction
+            key={reaction.timestamp.toString()}
+            x={reaction.point.x}
+            y={reaction.point.y}
+            timestamp={reaction.timestamp}
+            value={reaction.value}
+          />
+        ))}
+        
 
-      {/* If cursor is in chat mode, show the chat cursor */}
-      {cursor && (
-        <CursorChat
-          cursor={cursor}
-          cursorState={cursorState}
-          setCursorState={setCursorState}
-          updateMyPresence={updateMyPresence}
-        />
-      )}
+        {/* If cursor is in chat mode, show the chat cursor */}
+        {cursor && (
+          <CursorChat
+            cursor={cursor}
+            cursorState={cursorState}
+            setCursorState={setCursorState}
+            updateMyPresence={updateMyPresence}
+          />
+        )}
 
-      {/* If cursor is in reaction selector mode, show the reaction selector */}
-      {cursorState.mode === CursorMode.ReactionSelector && (
-        <ReactionSelector setReaction={setReactions} />
-      )}
+        {/* If cursor is in reaction selector mode, show the reaction selector */}
+        {cursorState.mode === CursorMode.ReactionSelector && (
+          <ReactionSelector
+            setReaction={(reaction) => {
+              setReaction(reaction);
+            }}
+          />
+        )}
 
-      <LiveCursors others={others} />
-    </div>
+        <LiveCursors others={others} />
+      </div>
+    
   );
 }
-
-export default Live;
