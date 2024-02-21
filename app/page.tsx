@@ -11,8 +11,10 @@ import {
   handleCanvasMouseDown,
   handleCanvasMouseMove,
   handleCanvasMouseUp,
+  handleCanvasObjectModified,
   handleResize,
   initializeFabric,
+  renderCanvas,
 } from "@/lib/canvas";
 import { ActiveElement } from "@/types/type";
 import { useMutation, useStorage } from "@/liveblocks.config";
@@ -62,7 +64,7 @@ export default function Page() {
      *
      * Event inspector: http://fabricjs.com/events
      * Event list: http://fabricjs.com/docs/fabric.Canvas.html#fire
-      */
+     */
     canvas.on("mouse:down", (options) => {
       handleCanvasMouseDown({
         options,
@@ -73,7 +75,6 @@ export default function Page() {
       });
     });
 
-    
     /**
      * Listen to the mouse move event on the canvas which is fired when the
      * user moves the mouse on the canvas.
@@ -105,10 +106,31 @@ export default function Page() {
       });
     });
 
+    /**
+     * Listen to the object modified event on the canvas which is fired
+     * when the user modifies an object on the canvas. Basically, when the
+     * user changes the width, height, color etc properties/attributes of
+     * the object or moves the object on the canvas.
+     */
+    canvas.on("object:modified", (options) => {
+      handleCanvasObjectModified({
+        options,
+        syncShapeInStorage,
+      });
+    });
+
     window.addEventListener("resize", () => {
       handleResize({ fabricRef });
     });
   }, []);
+
+  useEffect(() => {
+    renderCanvas({
+      fabricRef,
+      canvasObjects,
+      activeObjectRef,
+    });
+  }, [canvasObjects]);
 
   return (
     <main className="h-screen overflow-hidden">
