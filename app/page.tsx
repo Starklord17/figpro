@@ -12,11 +12,12 @@ import {
   handleCanvasMouseMove,
   handleCanvasMouseUp,
   handleCanvasObjectModified,
+  handleCanvasSelectionCreated,
   handleResize,
   initializeFabric,
   renderCanvas,
 } from "@/lib/canvas";
-import { ActiveElement } from "@/types/type";
+import { ActiveElement, Attributes } from "@/types/type";
 import { useMutation, useRedo, useStorage, useUndo } from "@/liveblocks.config";
 import { defaultNavElement } from "@/constants";
 import { handleDelete, handleKeyDown } from "@/lib/key-events";
@@ -40,8 +41,27 @@ export default function Page() {
   const selectedShapeRef = useRef<string | null>(null);
   const activeObjectRef = useRef<fabric.Object | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const isEditingRef = useRef(false);
 
   const canvasObjects = useStorage((root) => root.canvasObjects);
+
+  /**
+   * elementAttributes is an object that contains the attributes of the selected
+   * element in the canvas.
+   *
+   * We use this to update the attributes of the selected element when the user
+   * is editing the width, height, color etc properties/attributes of the
+   * object.
+   */
+  const [elementAttributes, setElementAttributes] = useState<Attributes>({
+    width: "",
+    height: "",
+    fontSize: "",
+    fontFamily: "",
+    fontWeight: "",
+    fill: "#aabbcc",
+    stroke: "#aabbcc",
+  });
 
   const syncShapeInStorage = useMutation(({ storage }, object) => {
     if (!object) return;
@@ -87,7 +107,7 @@ export default function Page() {
     return canvasObjects.size === 0;
   }, []);
 
-   /**
+  /**
    * deleteShapeFromStorage is a mutation that deletes a shape from the
    * key-value store of liveblocks.
    * useMutation is a hook provided by Liveblocks that allows you to perform
@@ -100,7 +120,7 @@ export default function Page() {
    * We're using this mutation to delete a shape from the key-value store when
    * the user deletes a shape from the canvas.
    */
-   const deleteShapeFromStorage = useMutation(({ storage }, shapeId) => {
+  const deleteShapeFromStorage = useMutation(({ storage }, shapeId) => {
     /**
      * canvasObjects is a Map that contains all the shapes in the key-value.
      * Like a store. We can create multiple stores in liveblocks.
@@ -232,9 +252,24 @@ export default function Page() {
       });
     });
 
+    /**
+     * Listen to the selection created event on the canvas which is fired
+     * when the user selects an object on the canvas.
+     *
+     * Event inspector: http://fabricjs.com/events
+     * Event list: http://fabricjs.com/docs/fabric.Canvas.html#fire
+     */
+    canvas.on("selection:created", (options) => {
+      handleCanvasSelectionCreated({
+        options,
+        isEditingRef,
+        setElementAttributes,
+      });
+    });
+
     window.addEventListener("resize", () => {
       handleResize({ fabricRef });
-    })
+    });
 
     /**
      * listen to the key down event on the window which is fired when the
@@ -255,7 +290,7 @@ export default function Page() {
 
     return () => {
       canvas.dispose();
-    }
+    };
   }, []);
 
   // render the canvas when the canvasObjects from live storage changes
@@ -289,7 +324,14 @@ export default function Page() {
       <section className="flex h-full flex-row">
         <LeftSidebar allShapes={Array.from(canvasObjects)} />
         <Live canvasRef={canvasRef} />
-        <RightSidebar />
+        <RightSidebar
+          elementAttributes={elementAttributes}
+          setElementAttributes={setElementAttributes}
+          fabricRef={fabricRef}
+          isEditingRef={isEditingRef}
+          activeObjectRef={activeObjectRef}
+          syncShapeInStorage={syncShapeInStorage}
+        />
       </section>
     </main>
   );
