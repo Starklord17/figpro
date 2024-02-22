@@ -13,6 +13,7 @@ import { CursorMode, CursorState, Reaction, ReactionEvent } from "@/types/type";
 import ReactionSelector from "./reaction/ReactionButton";
 import FlyingReaction from "./reaction/FlyingReaction";
 import useInterval from "@/hooks/useInterval";
+import { Comments } from "./comments/Comments";
 
 type Props = {
   canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
@@ -183,7 +184,8 @@ export default function Live({ canvasRef }: Props) {
       onPointerLeave={handlePointerLeave}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
-      className="h-[100vh] w-full flex justify-center items-center text-center"
+      // className="h-[100vh] w-full flex justify-center items-center text-center"
+      className="relative flex h-full w-full flex-1 items-center justify-center"
     >
       {/* <h1 className="text-4xl font-bold mt-8 mb-8 text-white md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-display tracking-tight dark:text-white md:tracking-tighter leading-tight">
           Liveblocks Figma Clone
@@ -222,6 +224,8 @@ export default function Live({ canvasRef }: Props) {
       )}
 
       <LiveCursors others={others} />
+
+      <Comments />
     </div>
   );
 }
