@@ -12,6 +12,7 @@ import {
   handleCanvasMouseMove,
   handleCanvasMouseUp,
   handleCanvasObjectModified,
+  handleCanvasObjectScaling,
   handleCanvasSelectionCreated,
   handleResize,
   initializeFabric,
@@ -263,6 +264,20 @@ export default function Page() {
       handleCanvasSelectionCreated({
         options,
         isEditingRef,
+        setElementAttributes,
+      });
+    });
+
+    /**
+     * Listen to the scaling event on the canvas which is fired when the
+     * user scales an object on the canvas.
+     *
+     * Event inspector: http://fabricjs.com/events
+     * Event list: http://fabricjs.com/docs/fabric.Canvas.html#fire
+     */
+    canvas.on("object:scaling", (options) => {
+      handleCanvasObjectScaling({
+        options,
         setElementAttributes,
       });
     });
