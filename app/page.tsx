@@ -14,6 +14,7 @@ import {
   handleCanvasObjectModified,
   handleCanvasObjectScaling,
   handleCanvasSelectionCreated,
+  handlePathCreated,
   handleResize,
   initializeFabric,
   renderCanvas,
@@ -279,6 +280,18 @@ export default function Page() {
       handleCanvasObjectScaling({
         options,
         setElementAttributes,
+      });
+    });
+
+    /**
+     * Listen to the path created event on the canvas which is fired when
+     * the user creates a path on the canvas using the freeform drawing
+     * mode.
+     */
+    canvas.on("path:created", (options) => {
+      handlePathCreated({
+        options,
+        syncShapeInStorage,
       });
     });
 
