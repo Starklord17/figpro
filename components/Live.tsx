@@ -1,6 +1,11 @@
-// "use client";
+"use client";
 
-import { useBroadcastEvent, useEventListener, useMyPresence, useOthers } from "@/liveblocks.config";
+import {
+  useBroadcastEvent,
+  useEventListener,
+  useMyPresence,
+  useOthers,
+} from "@/liveblocks.config";
 import LiveCursors from "./cursor/LiveCursors";
 import { useCallback, useEffect, useState } from "react";
 import CursorChat from "./cursor/CursorChat";
@@ -11,39 +16,41 @@ import useInterval from "@/hooks/useInterval";
 
 type Props = {
   canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
-}
+};
 
 export default function Live({ canvasRef }: Props) {
   const others = useOthers();
   const [{ cursor }, updateMyPresence] = useMyPresence() as any;
-  
+
   const broadcast = useBroadcastEvent();
 
   // store the reactions created on mouse click
   const [reactions, setReactions] = useState<Reaction[]>([]);
-
 
   // track the state of the cursor (hidden, chat, reaction, reaction selector)
   const [cursorState, setCursorState] = useState<CursorState>({
     mode: CursorMode.Hidden,
   });
 
-
   // set the reaction of the cursor
   const setReaction = useCallback((reaction: string) => {
     setCursorState({ mode: CursorMode.Reaction, reaction, isPressed: false });
   }, []);
-  
-
 
   // Remove reactions that are not visible anymore (every 1 sec)
   useInterval(() => {
-    setReactions((reactions) => reactions.filter((reaction) => reaction.timestamp > Date.now() - 4000))
-  }, 1000)
+    setReactions((reactions) =>
+      reactions.filter((reaction) => reaction.timestamp > Date.now() - 4000)
+    );
+  }, 1000);
 
   // Broadcast the reaction to other users (every 100ms)
   useInterval(() => {
-    if (cursorState.mode === CursorMode.Reaction && cursorState.isPressed && cursor) {
+    if (
+      cursorState.mode === CursorMode.Reaction &&
+      cursorState.isPressed &&
+      cursor
+    ) {
       // concat all the reactions created on mouse click
       setReactions((reactions) =>
         reactions.concat([
@@ -83,21 +90,30 @@ export default function Live({ canvasRef }: Props) {
     );
   });
 
+  // Listen to mouse events to change the cursor state
   const handlePointerMove = useCallback((event: React.PointerEvent) => {
     event.preventDefault();
 
+    // if cursor is not in reaction selector mode, update the cursor position
     if (cursor == null || cursorState.mode !== CursorMode.ReactionSelector) {
+      // get the cursor position in the canvas
       const x = event.clientX - event.currentTarget.getBoundingClientRect().x; // Subtracting position of the cursor relative to the window.
       const y = event.clientY - event.currentTarget.getBoundingClientRect().y;
 
+      // broadcast the cursor position to other users
       updateMyPresence({ cursor: { x, y } });
     }
   }, []);
 
-  const handlePointerLeave = useCallback((event: React.PointerEvent) => {
-    setCursorState({ mode: CursorMode.Hidden });
-
-    updateMyPresence({ cursor: null, message: null });
+  // Hide the cursor when the mouse leaves the canvas
+  const handlePointerLeave = useCallback(() => {
+    setCursorState({
+      mode: CursorMode.Hidden,
+    });
+    updateMyPresence({
+      cursor: null,
+      message: null,
+    });
   }, []);
 
   const handlePointerDown = useCallback(
@@ -160,57 +176,52 @@ export default function Live({ canvasRef }: Props) {
     };
   }, [updateMyPresence]);
 
-
-
   return (
-    
-      <div
-        id="canvas"
-        onPointerMove={handlePointerMove}
-        onPointerLeave={handlePointerLeave}
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
-        className="h-[100vh] w-full flex justify-center items-center text-center"
-      >
-        {/* <h1 className="text-4xl font-bold mt-8 mb-8 text-white md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-display tracking-tight dark:text-white md:tracking-tighter leading-tight">
+    <div
+      id="canvas"
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      className="h-[100vh] w-full flex justify-center items-center text-center"
+    >
+      {/* <h1 className="text-4xl font-bold mt-8 mb-8 text-white md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-display tracking-tight dark:text-white md:tracking-tighter leading-tight">
           Liveblocks Figma Clone
         </h1> */}
 
-        <canvas ref={canvasRef} />
+      <canvas ref={canvasRef} />
 
-        {/* Render the reactions */}
-        {reactions.map((reaction) => (
-          <FlyingReaction
-            key={reaction.timestamp.toString()}
-            x={reaction.point.x}
-            y={reaction.point.y}
-            timestamp={reaction.timestamp}
-            value={reaction.value}
-          />
-        ))}
-        
+      {/* Render the reactions */}
+      {reactions.map((reaction) => (
+        <FlyingReaction
+          key={reaction.timestamp.toString()}
+          x={reaction.point.x}
+          y={reaction.point.y}
+          timestamp={reaction.timestamp}
+          value={reaction.value}
+        />
+      ))}
 
-        {/* If cursor is in chat mode, show the chat cursor */}
-        {cursor && (
-          <CursorChat
-            cursor={cursor}
-            cursorState={cursorState}
-            setCursorState={setCursorState}
-            updateMyPresence={updateMyPresence}
-          />
-        )}
+      {/* If cursor is in chat mode, show the chat cursor */}
+      {cursor && (
+        <CursorChat
+          cursor={cursor}
+          cursorState={cursorState}
+          setCursorState={setCursorState}
+          updateMyPresence={updateMyPresence}
+        />
+      )}
 
-        {/* If cursor is in reaction selector mode, show the reaction selector */}
-        {cursorState.mode === CursorMode.ReactionSelector && (
-          <ReactionSelector
-            setReaction={(reaction) => {
-              setReaction(reaction);
-            }}
-          />
-        )}
+      {/* If cursor is in reaction selector mode, show the reaction selector */}
+      {cursorState.mode === CursorMode.ReactionSelector && (
+        <ReactionSelector
+          setReaction={(reaction) => {
+            setReaction(reaction);
+          }}
+        />
+      )}
 
-        <LiveCursors others={others} />
-      </div>
-    
+      <LiveCursors others={others} />
+    </div>
   );
 }
