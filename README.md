@@ -1,4 +1,7 @@
 <div align="center">
+
+  <h1 align="center">FigPro</h1>
+
   <br />
       <img src="https://github.com/JavaScript-Mastery-Pro/figma-ts/assets/151519281/e03dc22d-0f45-464b-9dc3-f01f07906bee" alt="Project Banner">
   <br />
@@ -76,8 +79,8 @@ Make sure you have the following installed on your machine:
 **Cloning the Repository**
 
 ```bash
-git clone https://github.com/Starklord17/next-figma-clone
-cd next-figma-clone
+git clone https://github.com/Starklord17/figpro
+cd figpro
 ```
 
 **Installation**
@@ -127,4 +130,4 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to view the 
 
 ---
 
-   <div align="center">Credits: JavaScript Mastery</div>
+   <div align="center">Thanks to JavaScript Mastery</div>
