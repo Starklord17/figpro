@@ -101,7 +101,7 @@ export default function Page() {
     if (!canvasObjects || canvasObjects.size === 0) return true;
 
     // delete all the shapes from the store
-    for (const [key, value] of canvasObjects.entries()) {
+    for (const [key] of canvasObjects.entries()) {
       canvasObjects.delete(key);
     }
 
@@ -327,7 +327,7 @@ export default function Page() {
     return () => {
       canvas.dispose();
     };
-  }, []);
+  }, [canvasRef, fabricRef, undo, redo, syncShapeInStorage, deleteShapeFromStorage]);
 
   // Render the canvas when the canvasObjects from live storage changes.
   useEffect(() => {
