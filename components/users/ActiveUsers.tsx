@@ -30,6 +30,7 @@ const ActiveUsers = () => {
       </div>
     </div>
     )
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users.length])
 
   return memoizedUsers;
