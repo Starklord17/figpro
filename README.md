@@ -125,6 +125,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to view the 
 **Radix**
 - https://www.radix-ui.com/
 
-## Credits
+---
 
-   <div align="center">JavaScript Mastery</div>
+   <div align="center">Credits => JavaScript Mastery</div>
