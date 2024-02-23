@@ -34,6 +34,7 @@ const LeftSidebar = ({ allShapes }: { allShapes: Array<any> }) => {
         </div>
       </section>
     ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [allShapes?.length]
   );
 

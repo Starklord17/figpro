@@ -113,6 +113,7 @@ export default function Live({ canvasRef, undo, redo }: Props) {
       // Broadcast the cursor position to other users
       updateMyPresence({ cursor: { x, y } });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Hide the cursor when the mouse leaves the canvas
@@ -124,6 +125,7 @@ export default function Live({ canvasRef, undo, redo }: Props) {
       cursor: null,
       message: null,
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePointerDown = useCallback(
@@ -139,6 +141,7 @@ export default function Live({ canvasRef, undo, redo }: Props) {
           : state
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [cursorState.mode, setCursorState]
   );
 
@@ -212,6 +215,7 @@ export default function Live({ canvasRef, undo, redo }: Props) {
       default:
         break;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
