@@ -10,7 +10,7 @@ import {
 } from "react";
 import { Slot } from "@radix-ui/react-slot";
 import * as Portal from "@radix-ui/react-portal";
-import { ComposerSubmitComment } from "@liveblocks/react-comments/primitives";
+import { ComposerSubmitComment } from "@liveblocks/react-comments";
 
 import { useCreateThread } from "@/liveblocks.config";
 import { useMaxZIndex } from "@/lib/useMaxZIndex";
@@ -31,7 +31,7 @@ export const NewThread = ({ children }: Props) => {
   >("complete");
 
   /**
-   * We're using the useCreateThread hook to create a new thread.
+   * useCreateThread hook is used to create a new thread.
    *
    * useCreateThread: https://liveblocks.io/docs/api-reference/liveblocks-react#useCreateThread
    */
@@ -175,7 +175,7 @@ export const NewThread = ({ children }: Props) => {
       const x = composerCoords.x - left;
       const y = composerCoords.y - top;
 
-      // create a new thread with the composer coords and cursor selectors
+      // Create a new thread with the composer coords and cursor selectors
       createThread({
         body,
         metadata: {
@@ -215,7 +215,7 @@ export const NewThread = ({ children }: Props) => {
         {children}
       </Slot>
 
-      {/* if composer coords exist and we're placing a comment, render the composer */}
+      {/* If composer coords exist and we're placing a comment, render the composer */}
       {composerCoords && creatingCommentState === "placed" ? (
         /**
          * Portal.Root is used to render the composer outside of the NewThread component to avoid z-index issuess

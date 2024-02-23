@@ -22,7 +22,7 @@ export const PinnedThread = ({ thread, onFocus, ...props }: Props) => {
   const [minimized, setMinimized] = useState(startMinimized);
 
   /**
-   * memoize the result of this function so that it doesn't change on every render but only when the thread changes
+   * Memoize the result of this function so that it doesn't change on every render but only when the thread changes
    * Memo is used to optimize performance and avoid unnecessary re-renders.
    *
    * useMemo: https://react.dev/reference/react/useMemo
@@ -36,7 +36,7 @@ export const PinnedThread = ({ thread, onFocus, ...props }: Props) => {
         onClick={(e: any) => {
           onFocus(thread.id);
 
-          // check if click is on/in the composer
+          // Check if click is on/in the composer
           if (
             e.target &&
             e.target.classList.contains("lb-icon") &&
