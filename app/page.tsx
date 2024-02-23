@@ -143,37 +143,37 @@ export default function Page() {
     setActiveElement(elem);
 
     switch (elem?.value) {
-      // delete all the shapes from the canvas
+      // Delete all the shapes from the canvas
       case "reset":
-        // clear the storage
+        // Clear the storage
         deleteAllShapes();
-        // clear the canvas
+        // Clear the canvas
         fabricRef.current?.clear();
-        // set "select" as the active element
+        // Set "select" as the active element
         setActiveElement(defaultNavElement);
         break;
 
-      // delete the selected shape from the canvas
+      // Delete the selected shape from the canvas
       case "delete":
-        // delete it from the canvas
+        // Delete it from the canvas
         handleDelete(fabricRef.current as any, deleteShapeFromStorage);
-        // set "select" as the active element
+        // Set "select" as the active element
         setActiveElement(defaultNavElement);
         break;
 
-      // upload an image to the canvas
+      // Upload an image to the canvas
       case "image":
-        // trigger the click event on the input element which opens the file dialog
+        // Trigger the click event on the input element which opens the file dialog
         imageInputRef.current?.click();
         /**
-         * set drawing mode to false
+         * Set drawing mode to false
          * If the user is drawing on the canvas, we want to stop the
          * drawing mode when clicked on the image item from the dropdown.
          */
         isDrawing.current = false;
 
         if (fabricRef.current) {
-          // disable the drawing mode of canvas
+          // Disable the drawing mode of canvas
           fabricRef.current.isDrawingMode = false;
         }
         break;
@@ -183,14 +183,14 @@ export default function Page() {
         break;
 
       default:
-        // set the selected shape to the selected element
+        // Set the selected shape to the selected element
         selectedShapeRef.current = elem?.value as string;
         break;
     }
   };
 
   useEffect(() => {
-    // initialize the fabric canvas
+    // Initialize the fabric canvas
     const canvas = initializeFabric({ canvasRef, fabricRef });
 
     /**
@@ -295,12 +295,20 @@ export default function Page() {
       });
     });
 
+    /**
+     * Listen to the resize event on the window which is fired when the
+     * user resizes the window.
+     *
+     * Resize the canvas when the user resizes the window.
+     */
     window.addEventListener("resize", () => {
-      handleResize({ fabricRef });
+      handleResize({
+        canvas: fabricRef.current,
+      });
     });
 
     /**
-     * listen to the key down event on the window which is fired when the
+     * Listen to the key down event on the window which is fired when the
      * user presses a key on the keyboard.
      *
      * We're using this to perform some actions like delete, copy, paste, etc when the user presses the respective keys on the keyboard.
@@ -321,7 +329,7 @@ export default function Page() {
     };
   }, []);
 
-  // render the canvas when the canvasObjects from live storage changes
+  // Render the canvas when the canvasObjects from live storage changes.
   useEffect(() => {
     renderCanvas({
       fabricRef,
@@ -337,7 +345,7 @@ export default function Page() {
         handleActiveElement={handleActiveElement}
         imageInputRef={imageInputRef}
         handleImageUpload={(e: any) => {
-          // prevent the default behavior of the input element
+          // Prevent the default behavior of the input element.
           e.stopPropagation();
 
           handleImageUpload({

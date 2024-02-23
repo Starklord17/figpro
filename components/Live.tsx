@@ -4,12 +4,12 @@ import {
   useBroadcastEvent,
   useEventListener,
   useMyPresence,
-  useOthers,
+  // useOthers,
 } from "@/liveblocks.config";
 import LiveCursors from "./cursor/LiveCursors";
 import { useCallback, useEffect, useState } from "react";
 import CursorChat from "./cursor/CursorChat";
-import { CursorMode, CursorState, Reaction, ReactionEvent } from "@/types/type";
+import { CursorMode, CursorState, Reaction } from "@/types/type";
 import ReactionSelector from "./reaction/ReactionButton";
 import FlyingReaction from "./reaction/FlyingReaction";
 import useInterval from "@/hooks/useInterval";
@@ -29,20 +29,20 @@ type Props = {
 };
 
 export default function Live({ canvasRef, undo, redo }: Props) {
-  const others = useOthers();
-  const [{ cursor }, updateMyPresence] = useMyPresence() as any;
+  // const others = useOthers();
+  const [{ cursor }, updateMyPresence] = useMyPresence();
 
   const broadcast = useBroadcastEvent();
 
-  // store the reactions created on mouse click
+  // Store the reactions created on mouse click
   const [reactions, setReactions] = useState<Reaction[]>([]);
 
-  // track the state of the cursor (hidden, chat, reaction, reaction selector)
+  // Track the state of the cursor (hidden, chat, reaction, reaction selector)
   const [cursorState, setCursorState] = useState<CursorState>({
     mode: CursorMode.Hidden,
   });
 
-  // set the reaction of the cursor
+  // Set the reaction of the cursor
   const setReaction = useCallback((reaction: string) => {
     setCursorState({ mode: CursorMode.Reaction, reaction, isPressed: false });
   }, []);
@@ -61,7 +61,7 @@ export default function Live({ canvasRef, undo, redo }: Props) {
       cursorState.isPressed &&
       cursor
     ) {
-      // concat all the reactions created on mouse click
+      // Concat all the reactions created on mouse click
       setReactions((reactions) =>
         reactions.concat([
           {
@@ -88,7 +88,7 @@ export default function Live({ canvasRef, undo, redo }: Props) {
    * useEventListener: https://liveblocks.io/docs/api-reference/liveblocks-react#useEventListener
    */
   useEventListener((eventData) => {
-    const event = eventData.event as ReactionEvent;
+    const event = eventData.event;
     setReactions((reactions) =>
       reactions.concat([
         {
@@ -110,7 +110,7 @@ export default function Live({ canvasRef, undo, redo }: Props) {
       const x = event.clientX - event.currentTarget.getBoundingClientRect().x; // Subtracting position of the cursor relative to the window.
       const y = event.clientY - event.currentTarget.getBoundingClientRect().y;
 
-      // broadcast the cursor position to other users
+      // Broadcast the cursor position to other users
       updateMyPresence({ cursor: { x, y } });
     }
   }, []);
@@ -186,7 +186,7 @@ export default function Live({ canvasRef, undo, redo }: Props) {
     };
   }, [updateMyPresence]);
 
-  // trigger respective actions when the user clicks on the right menu
+  // Trigger respective actions when the user clicks on the right menu
   const handleContextMenuClick = useCallback((key: string) => {
     switch (key) {
       case "Chat":
@@ -261,7 +261,8 @@ export default function Live({ canvasRef, undo, redo }: Props) {
           />
         )}
 
-        <LiveCursors others={others} />
+        {/*<LiveCursors others={others} />*/}
+        <LiveCursors />
 
         <Comments />
       </ContextMenuTrigger>

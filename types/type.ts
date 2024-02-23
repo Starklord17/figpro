@@ -1,4 +1,4 @@
-import { BaseUserMeta, User } from "@liveblocks/client";
+// import { BaseUserMeta, User } from "@liveblocks/client";
 import { Gradient, Pattern } from "fabric/fabric-impl";
 
 export enum CursorMode {
@@ -118,11 +118,12 @@ export type ShapesMenuProps = {
   imageInputRef: any;
 };
 
-export type Presence = any;
+// This works automatically with liveblocks
+// export type Presence = any;
 
-export type LiveCursorProps = {
-  others: readonly User<Presence, BaseUserMeta>[];
-};
+// export type LiveCursorProps = {
+//   others: readonly User<Presence, BaseUserMeta>[];
+// };
 
 export type CanvasMouseDown = {
   options: fabric.IEvent;
