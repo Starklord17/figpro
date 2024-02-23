@@ -12,7 +12,7 @@ dependencies:
     specifier: ^1.9.8
     version: 1.9.8(react@18.2.0)
   '@liveblocks/react-comments':
-    specifier: ^1.9.8
+    specifier: ^1.9.7
     version: 1.9.8(@types/react-dom@18.2.19)(@types/react@18.2.55)(react-dom@18.2.0)(react@18.2.0)
   '@radix-ui/react-collapsible':
     specifier: ^1.0.3
