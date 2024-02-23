@@ -1,10 +1,14 @@
 "use client";
 
 import { ReactNode } from "react";
-import { RoomProvider } from "../liveblocks.config";
+import { Presence, RoomProvider } from "../liveblocks.config";
 import { ClientSideSuspense } from "@liveblocks/react";
 import { LiveMap } from "@liveblocks/client";
 import Loader from "@/components/Loader";
+
+interface ExtendedPresence extends Presence {
+  cursorColor: string | null;
+}
 
 export function Room({ children }: { children: ReactNode }) {
   return (
@@ -20,7 +24,8 @@ export function Room({ children }: { children: ReactNode }) {
         cursor: null,
         cursorColor: null,
         editingText: null,
-      }}
+        message: null,
+      } as ExtendedPresence}
       /**
        * initialStorage is used to initialize the storage of the room.
        *
