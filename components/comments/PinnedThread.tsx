@@ -28,6 +28,11 @@ export const PinnedThread = ({ thread, onFocus }: Props) => {
    * Memoize the result of this function so that it doesn't change on every render but only when the thread changes
    * Memo is used to optimize performance and avoid unnecessary re-renders.
    *
+   * Note: 'thread' object is intentionally included as a dependency because:
+   * - thread.id is used in the onClick handler
+   * - The entire thread object is passed to the Thread component which needs access to all thread data
+   * This is more efficient than listing individual thread properties since Thread component needs the full object.
+   *
    * useMemo: https://react.dev/reference/react/useMemo
    */
 
