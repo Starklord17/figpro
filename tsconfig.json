@@ -26,8 +26,7 @@
         "./*"
       ]
     },
-    "downlevelIteration": true // Add this line to enable downlevel iteration
-    ,
+    "downlevelIteration": true, // Add this line to enable downlevel iteration
     "target": "ES2017"
   },
   "include": [
