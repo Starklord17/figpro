@@ -26,9 +26,8 @@
         "./*"
       ]
     },
-    "downlevelIteration": true // Add this line to enable downlevel iteration
-    ,
-    "target": "ES2017"
+    "downlevelIteration": true,
+    "target": "ES2020"
   },
   "include": [
     "next-env.d.ts",
