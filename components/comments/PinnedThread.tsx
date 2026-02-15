@@ -12,7 +12,7 @@ type Props = {
   onFocus: (threadId: string) => void;
 };
 
-export const PinnedThread = ({ thread, onFocus, ...props }: Props) => {
+export const PinnedThread = ({ thread, onFocus }: Props) => {
   // Generate a stable avatar ID using lazy initialization (only runs once)
   const [avatarId] = useState(() => Math.floor(Math.random() * 30));
   
@@ -35,7 +35,6 @@ export const PinnedThread = ({ thread, onFocus, ...props }: Props) => {
     () => (
       <div
         className='absolute flex cursor-pointer gap-4'
-        {...props}
         onClick={(e: any) => {
           onFocus(thread.id);
 
@@ -77,7 +76,7 @@ export const PinnedThread = ({ thread, onFocus, ...props }: Props) => {
         ) : null}
       </div>
     ),
-    [thread, minimized, onFocus, props, avatarId]
+    [thread, minimized, onFocus, avatarId]
   );
 
   return <>{memoizedContent}</>;
