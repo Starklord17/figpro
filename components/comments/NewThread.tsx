@@ -49,7 +49,11 @@ export const NewThread = ({ children }: Props) => {
   // set state to track if user is allowed to use the composer
   const [allowUseComposer, setAllowUseComposer] = useState(false);
   const allowComposerRef = useRef(allowUseComposer);
-  allowComposerRef.current = allowUseComposer;
+  
+  // Update ref in useEffect to avoid updating during render
+  useEffect(() => {
+    allowComposerRef.current = allowUseComposer;
+  }, [allowUseComposer]);
 
   useEffect(() => {
     // If composer is already placed, don't do anything

@@ -32,25 +32,39 @@ type Props = {
   otherStyles?: string;
 };
 
-const Avatar = ({ name, otherStyles }: Props) => (
-  <TooltipProvider>
-    <Tooltip>
-      <TooltipTrigger>
-        <div className={`relative h-9 w-9 rounded-full ${otherStyles}`} data-tooltip={name}>
-          <Image
-            src={`https://liveblocks.io/avatars/avatar-${Math.floor(Math.random() * 30)}.png`}
-            fill
-            className="rounded-full"
-            alt={name}
-          />
-        </div>
-      </TooltipTrigger>
-      <TooltipContent className="border-none bg-primary-grey-200 px-2.5 py-1.5 text-xs">
-        {name}
-      </TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
-);
+// Generate a stable avatar number from a string (name)
+const getAvatarId = (name: string): number => {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = ((hash << 5) - hash) + name.charCodeAt(i);
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return Math.abs(hash) % 30;
+};
+
+const Avatar = ({ name, otherStyles }: Props) => {
+  const avatarId = getAvatarId(name);
+  
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <div className={`relative h-9 w-9 rounded-full ${otherStyles}`} data-tooltip={name}>
+            <Image
+              src={`https://liveblocks.io/avatars/avatar-${avatarId}.png`}
+              fill
+              className="rounded-full"
+              alt={name}
+            />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent className="border-none bg-primary-grey-200 px-2.5 py-1.5 text-xs">
+          {name}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
 
 export default Avatar;
 

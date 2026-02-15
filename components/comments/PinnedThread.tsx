@@ -13,6 +13,9 @@ type Props = {
 };
 
 export const PinnedThread = ({ thread, onFocus, ...props }: Props) => {
+  // Generate a stable avatar ID using lazy initialization (only runs once)
+  const [avatarId] = useState(() => Math.floor(Math.random() * 30));
+  
   // Open pinned threads that have just been created
   const startMinimized = useMemo(
     () => Number(new Date()) - Number(new Date(thread.createdAt)) > 100,
@@ -53,7 +56,7 @@ export const PinnedThread = ({ thread, onFocus, ...props }: Props) => {
           data-draggable={true}
         >
           <Image
-            src={`https://liveblocks.io/avatars/avatar-${Math.floor(Math.random() * 30)}.png`}
+            src={`https://liveblocks.io/avatars/avatar-${avatarId}.png`}
             alt='Dummy Name'
             width={28}
             height={28}
@@ -74,7 +77,7 @@ export const PinnedThread = ({ thread, onFocus, ...props }: Props) => {
         ) : null}
       </div>
     ),
-    [thread.comments.length, minimized]
+    [thread, minimized, onFocus, props, avatarId]
   );
 
   return <>{memoizedContent}</>;
